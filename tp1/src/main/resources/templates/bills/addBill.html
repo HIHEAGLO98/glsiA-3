@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Ajouter une vente - Gestion vente</title>
+
+    <!-- Custom fonts for this template-->
+    <link th:href="@{../../vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link th:href="@{../../css/sb-admin-2.min.css}" rel="stylesheet">
+
+
+
+</head>
+
+<body id="page-top">
+
+<th:block th:replace="fragments/nav :: navigation"></th:block>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h5 class="h5 mb-0 text-gray-800 text-bold">Nouvelle vente</h5>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="text-center">
+                <h1 class="h4 text-gray-900 mb-4" th:text="'Facture ' + ${customer.lastName} ">Facture</h1>
+            </div>
+            <form class="" th:action="@{/bills/save}" method="post">
+                <input type="hidden" name="customerId" th:value="${customer.id} ">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="facture" width="100%" cellspacing="0" >
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Désignation</th>
+                            <th>Quantité</th>
+                            <th>Prix vente</th>
+                            <th>Prix total</th>
+                            <th>Act</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="sale:${sales}" id="Bill" th:if="${#lists.size(sales) > 0}">
+                            <td th:text="${saleStat.index+1}"></td>
+                            <td th:text="${sale.product.libelle}"></td>
+                            <td th:text="${sale.qty}"></td>
+                            <td th:text="${sale.salePrice}"></td>
+                            <td th:text="${sale.salePrice}*${sale.qty}"></td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-1 mr-4">
+                                        <form th:action="@{/bills/remove/{id}(id=${customer.id})}" th:id="'removeSale'+${saleStat.index}" method="post">
+                                            <input type="hidden" name="index" th:value="${saleStat.index}">
+                                            <button class="btn btn-circle btn-sm rounded-circle btn-danger" type="button"
+                                                    th:onclick="|onRemoveBtnClick('${saleStat.index}')|">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="font-weight-bold">
+                            <td class="text-center" colspan="4">TOTAL</td>
+                            <td th:text="${cost}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>
+                    <button class="btn btn-success btn-user btn-block" type="submit" th:if="${#lists.size(sales) > 0}">
+                        Facturer
+                    </button>
+                </p>
+            </form>
+
+        </div>
+
+        <div class="col-lg-5">
+            <div class="px-5">
+                <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">Ajouter à la facture</h1>
+                </div>
+                <form class="user" th:object="${sale}" id="" >
+                    <input type="hidden" th:field="*{productId}" th:value="*{productId}" id="productId">
+
+                    <div class="form-group">
+                        <input type="text" readonly class="form-control btn-user btn-block" id="libelle"
+                               >
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6 mb-3 mb-sm-0">
+                            <input type="number" required class="form-control btn-user btn-block" placeholder="Quantité"
+                                   th:field="*{qty}" min="1" id="qty">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="number" class="form-control btn-user btn-block" name="salePrice" placeholder="Prix de vente"
+                                   th:field="*{salePrice}" id="salePrice" min="10" value="500">
+                        </div>
+                    </div>
+                    <p th:text="${msg}" class="text-danger"></p>
+                    <hr>
+<!--                    <i class="btn btn-success btn-user btn-block" th:onclick="|onBtnClick('${sales}', '${sale}')|">Ajouter</i>-->
+                    <button type="submit" class="btn btn-success btn-user btn-block" onclick="reloadBill();">Ajouter</button>
+<!--                    <i th:text="${sales.add(sale)"></i>-->
+                    <p></p>
+                </form>
+
+
+                <!--/* Here comes a nasty trick! */-->
+                <!--<div th:text="${sales.add(sale)}" th:remove="all"></div>
+
+                <h1>Result</h1>
+                <ul>
+                    <li id="test"></li>
+                    <li th:each="child : ${sales}" th:text="${child.qty}"></li>
+                </ul>-->
+            </div>
+
+        </div>
+
+    </div>
+    <div class="row card mb-4">
+        <div class="px-5">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold mb-4">Choisissez un produit</h6>
+            </div>
+            <div class="card-body table-responsive w-100">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" th:if="${#lists.size(produits) > 0}">
+                    <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Désignation</th>
+                        <th>Prix Unitaire</th>
+                        <th>Quantité seuil</th>
+                        <th>Quantité en stock</th>
+                        <th>Date création</th>
+                        <th>Catégorie</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="produit:${produits}" th:onclick="onProdClick([[${produit.id}]], [[${produit.libelle}]], [[${produit.prix}]]);">
+                        <td th:text="${produit.id}"></td>
+                        <td th:text="${produit.libelle}"></td>
+                        <td th:text="${produit.prix}"></td>
+                        <td th:text="${produit.qteSeuil}"></td>
+                        <td th:text="${produit.qteStok}"></td>
+                        <td th:text="${produit.dateCreation}"></td>
+                        <td th:text="${produit.category.designation}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+    </div>
+</div>
+</div>
+<!-- /.container-fluid -->
+
+<th:block th:replace="fragments/footer :: footer"></th:block>
+
+    <script>
+        function reloadBill(){
+            $( "#Bill" ).load(window.location.href + " #Bill" );
+        }
+
+        function onRemoveBtnClick(id){
+            document.getElementById('removeSale'+id).submit()
+        }
+
+        function onProdClick(id, libelle, price){
+            document.getElementById("productId").value = id;
+            document.getElementById("libelle").value = libelle;
+            document.getElementById("salePrice").value = price;
+            document.getElementById("qty").focus();
+        }
+    </script>
+
+</body>
+
+</html>

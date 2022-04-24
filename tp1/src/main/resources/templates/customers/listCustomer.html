@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <title>Liste des clients - Gestion vente</title>
+
+    <th:block th:replace="fragments/metaAndLinks :: metaAndLinks"></th:block>
+</head>
+
+<body id="page-top">
+
+<th:block th:replace="fragments/nav :: navigation"></th:block>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total (clients)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <h6 class="m-0 font-weight-bold text-primary mb-4" th:text="${customers.size()}"></h6>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary mb-4">Liste des clients</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" th:if="${#lists.size(customers) > 0}">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Téléphone</th>
+                        <th>Adresse</th>
+                        <th>Date création</th>
+                        <th>Date modification</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="customer:${customers}">
+                        <td th:text="${customerStat.index+1}"></td>
+                        <td th:text="${customer.lastName}"></td>
+                        <td th:text="${customer.firstName}"></td>
+                        <td th:text="${customer.phone}"></td>
+                        <td th:text="${customer.address}"></td>
+                        <td th:text="${customer.createdAt}"></td>
+                        <td th:text="${customer.updatedAt}"></td>
+                        <td>
+                            <div class="row">
+                                <div class="col-md-1 mr-4">
+                                    <button class="btn btn-circle btn-sm rounded-circle btn-success">
+                                        <a th:href="@{/customers/edit/{id}(id=${customer.id})}" style="color:white;">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+                                    </button>
+                                    <button class="btn btn-circle btn-sm rounded-circle btn-danger mt-2">
+                                        <a th:href="@{/customers/delete/{id}(id=${customer.id})}" style="color:white;">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </button>
+                                </div>
+                                <div class="col-md-2 ml-4">
+                                    <button class="btn btn-circle btn-sm rounded-circle btn-primary mt-2">
+                                        <a th:href="@{/bills/create/{id}(id=${customer.id})}" style="color:white;">
+                                            <i class="fas fa-fw fa-table"></i>
+                                        </a>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->
+
+<th:block th:replace="fragments/footer :: footer"></th:block>
+
+
+</body>
+
+</html>
